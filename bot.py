@@ -1,5 +1,23 @@
+import os
+from flask import Flask
+from threading import Thread
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, InputMediaVideo, Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+
+# ----------------- রেন্ডার পোর্ট সার্ভার (Keep Alive) -----------------
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Bot is active!"
+
+def run():
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+# --------------------------------------------------------------------
 
 # ----------------- কনফিগারেশন -----------------
 BOT_TOKEN = "7660197234:AAHJ6TWtSXwPC3uHVIhPK_JKIdrA8qqKCtY"
@@ -43,6 +61,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await update.message.reply_text(text=welcome_text)
 
 if __name__ == '__main__':
+    # রেন্ডারে পোর্ট অন রাখার জন্য ব্যাকগ্রাউন্ড সার্ভার চালু করা
+    keep_alive()
+
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     
