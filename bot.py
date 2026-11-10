@@ -3,6 +3,7 @@ from flask import Flask
 from threading import Thread
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InputMediaPhoto, InputMediaVideo, Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.request import HTTPXRequest
 
 # ----------------- রেন্ডার পোর্ট সার্ভার (Keep Alive) -----------------
 app = Flask('')
@@ -21,7 +22,7 @@ def keep_alive():
 
 # ----------------- কনফিগারেশন -----------------
 BOT_TOKEN = "9194889156:AAEvuFpVSa3VDQz9DEtPlhN1sj_Qnb_NxGY"
-CHANNELANNEL_LINK = "https://t.me/viral_video_mal"
+CHANNEL_LINK = "https://t.me/viral_video_mal"
 CHANNEL_NAME = "📢 Join Our Main Channel"
 
 # ফাইল আইডিগুলো
@@ -64,8 +65,12 @@ if __name__ == '__main__':
     # রেন্ডারে পোর্ট অন রাখার জন্য ব্যাকগ্রাউন্ড সার্ভার চালু করা
     keep_alive()
 
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
+    # টাইমআউট এবং কানেকশন রিকোয়েস্ট সেটিংস বাড়িয়ে নেওয়া যাতে কনফ্লিক্ট না করে
+    request = HTTPXRequest(connect_timeout=30.0, read_timeout=30.0)
+    app_builder = ApplicationBuilder().token(BOT_TOKEN).request(request).build()
+    
+    app_builder.add_handler(CommandHandler("start", start))
     
     print("Bot is running smoothly...")
-    app.run_polling()
+    # drop_pending_updates=True যুক্ত করার ফলে আগের আটকে থাকা বা পেন্ডিং সব মেসেজ/সেশন ক্লিয়ার হয়ে যাবে
+    app_builder.run_polling(drop_pending_updates=True)
