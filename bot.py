@@ -20,7 +20,7 @@ def keep_alive():
 # --------------------------------------------------------------------
 
 # ----------------- কনফিগারেশন -----------------
-BOT_TOKEN = "7660197234:AAHJ6TWtSXwPC3uHVIhPK_JKIdrA8qqKCtY"
+BOT_TOKEN = "9127386018:AAGNhMxIn71nfW4C74rhWyl-FU7dqg5jd9Q"
 CHANNEL_LINK = "https://t.me/viral_video_mal"
 CHANNEL_NAME = "📢 Join Our Main Channel"
 
